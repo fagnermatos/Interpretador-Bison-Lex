@@ -7,6 +7,7 @@ typedef struct cell data;
 
 
 /**** Functions ****/
+void yyerror(char *);
 
 char *toString(char *old);
 
@@ -50,8 +51,8 @@ struct cell {
 void add(data *data, char *type, char *id) {
 
     if ((TAM != 0) && (contains(data, id) == 1)) {
-        printf("Variável de identificador %s já foi declarada! \n", id);
-        exit(1);
+	yyerror("Variavel já declarada");
+       exit(1);
     }
 
     if (TAM == 0) {
@@ -139,19 +140,19 @@ data *find(data *data, char *id) {
 void attrChar(data *data, char *id, char *value) {
 
     if (strlen(value) > 1) {
-        printf("Expressão inválida, valor passado deve ser um char e não uma string! \n");
+	yyerror("Expressão inválida, valor passado deve ser um char e não uma string! ");
         exit(1);
     }
 
     if (contains(data, id) == 0) {
-        printf("Variável de identificador %s não foi declarada! \n", id);
+	yyerror("Variável não foi declarada! ");
         exit(1);
     }
 
     struct cell *u = find(data, id);
 
     if (strcmp(u->type, "char")) {
-        printf("Tipos incompatíveis, o id %s espera um valor do tipo %s! \n", u->id, u->type);
+	yyerror("Tipo incompatível para o valor passado para a variável! ");
         exit(1);
     }
 
@@ -164,14 +165,14 @@ void attrChar(data *data, char *id, char *value) {
 
 void attrNum(data *data, char *id, float value) {
     if (contains(data, id) == 0) {
-        printf("Variável de identificador %s não foi declarada! \n", id);
+	yyerror("Variável  não foi declarada! ");
         exit(1);
     }
 
     struct cell *u = find(data, id);
 
     if (!strcmp(u->type, "char")) {
-        printf("Tipos incompatíveis, o id %s espera um valor do tipo %s! \n", u->id, u->type);
+	yyerror("Tipo incompatível para o valor passado para a variável! ");
         exit(1);
     }
 
@@ -187,7 +188,7 @@ void attrNum(data *data, char *id, float value) {
 
 char getCharValue(data *data, char *id) {
     if (contains(data, id) == 0) {
-        printf("Variável de identificador %s não foi declarada! \n", id);
+	yyerror("Variável não foi declarada!");
         exit(1);
     }
 
@@ -197,7 +198,7 @@ char getCharValue(data *data, char *id) {
 
 float getNumValue(data *data, char *id) {
     if (contains(data, id) == 0) {
-        printf("Variável de identificador %s não foi declarada! \n", id);
+	yyerror("Variável não foi declarada!");
         exit(1);
     }
 
@@ -220,7 +221,7 @@ char *toString(char *old) {
 
 int getCharIntValue(char* value) {
     if (strlen(value) > 1) {
-        printf("Expressão inválida, valor passado deve ser um char e não uma string! \n");
+	yyerror("Expressão inválida, valor passado deve ser um char e não uma string!");
         exit(1);
     }
 

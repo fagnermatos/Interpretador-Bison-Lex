@@ -9,41 +9,48 @@ id  {letra}({letra}|{digito})*
 
 %%
 
-"int"              			{return T_INT;}
-"char"              			{return T_CHAR;}
-"float"               			{return T_FLOAT;}
-{id}					{ 
-							yylval.s = strdup(yytext); 
-							return T_ID;
-						}
-{digito}+				{
-							yylval.i = atoi(yytext);
-							return T_NUM;
-						}
-
-
+"int"              							{return T_INT;}
+"char"              							{return T_CHAR;}
+"float"               						{return T_FLOAT;}
+{id}									{ 
+											yylval.s = strdup(yytext); 
+											return T_ID;
+										}
+{digito}+								{
+											yylval.i = atoi(yytext);
+											return T_NUM;
+										}
 [-+]?[0-9]*\.?[0-9][0-9]*			{
-									yylval.f = atof(yytext);
-									return T_NUMFLT;
-								}
+											yylval.f = atof(yytext);
+											return T_NUMFLT;
+										}
 
-";"						{return yytext[0];}
-[+-/*%()<>"!]   			{ return yytext[0]; }
-[']						{return T_QUOT;}
-"="						{return  T_AT;}
-"**"					{return T_EXP;}
-"&&"					{return T_AND;}
-"||"					{return T_OR;}
-"=="					{return T_EQ;}
-"!="					{return T_DIF;}
-"<="					{return T_LE;}
-">="					{return T_ME;}
-\n   					{ return T_EOL; } /* FIm de expressão*/
-[ \r\t]					{ /* ignore whitespace */ }
-<<EOF>>				{return T_END;}
-.      					{ printf("Expressao com caractere invalido: %s\n", yytext);}
+";"										{return yytext[0];}
+[+-/*%()<>"!]			   			{ return yytext[0]; }
+[']										{return T_QUOT;}
+"="									{return  T_AT;}
+"**"									{return T_EXP;}
+"&&"									{return T_AND;}
+"||"									{return T_OR;}
+"=="									{return T_EQ;}
+"!="									{return T_DIF;}
+"<="									{return T_LE;}
+">="									{return T_ME;}
+\n   									{yylineno+=1;  return T_EOL;}  /* FIm de expressão*/
+[ \r\t]									{ /* ignore whitespace */ }
+<<EOF>>								{return T_END;}
+.      									{ printf("Expressao com caractere invalido: %s\n", yytext);}
 
 %%
+
+
+void yyerror(char *s) {
+	if (strcmp("syntax error", s)) {
+		printf("Linha %d: %s '%s'\n", yylineno, s, yytext);
+	} else {
+		printf("Linha %d:  Erro de sintaxe próximo a '%s'\n", yylineno, yytext);
+	}
+}
 
 int yywrap(void){
 	return 1;
